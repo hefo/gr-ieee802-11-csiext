@@ -19,6 +19,7 @@
 
 #include <ieee802-11-csiext/api.h>
 #include <gnuradio/block.h>
+#include <string>
 
 namespace gr {
 namespace ieee802_11_csiext {
@@ -28,7 +29,7 @@ class IEEE802_11_CSIEXT_API parse_mac : virtual public block
 public:
 
 	typedef boost::shared_ptr<parse_mac> sptr;
-	static sptr make(bool log = false, bool debug = false);
+	static sptr make(bool log = false, bool debug = false, bool logcsi = false,std::string filename = "wifi_capture.csv");
 
 };
 

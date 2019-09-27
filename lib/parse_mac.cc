@@ -33,7 +33,7 @@ class parse_mac_impl : public parse_mac {
 public:
 
 std::string SSID = "No SSID";
-parse_mac_impl(bool log, bool debug) :
+parse_mac_impl(bool log, bool debug, bool logcsi,std::string filename) :
 		block("parse_mac",
 				gr::io_signature::make(0, 0, 0),
 				gr::io_signature::make(0, 0, 0)),
@@ -41,7 +41,9 @@ parse_mac_impl(bool log, bool debug) :
 		d_snr(0), //HF
 		d_cfo(0), //HF
 		d_enc(0),
-		d_debug(debug) {
+		d_debug(debug),
+		d_logcsi(logcsi),
+		d_filename(filename) {
 
 	message_port_register_in(pmt::mp("in"));
 	set_msg_handler(pmt::mp("in"), boost::bind(&parse_mac_impl::parse, this, _1));
@@ -122,11 +124,7 @@ void parse(pmt::pmt_t msg) {
 	}
 	
 	// ---------------------- mod (hefo@kth.se) ---------------------- ----------------------	
-	
-	//std::ofstream outfile_csv;
-	//outfile_csv.open("wifi_capture.csv", std::ios_base::app); // Create csv file
-	
-	
+
 	std::ostringstream outfile;
 	
 	// Write microsecond timestamp
@@ -209,8 +207,6 @@ void parse(pmt::pmt_t msg) {
 
 	std::string csi_string = outfile.str(); 
 	
-	//outfile_csv << csi_string;
-	
 		
 	pmt::pmt_t p = pmt::make_u8vector(csi_string.length(),0);
 			
@@ -222,7 +218,14 @@ void parse(pmt::pmt_t msg) {
 	}
 		
 	message_port_pub(pmt::mp("csi_data"),pmt::cons(pmt::PMT_NIL, p));
-
+	
+	if(!d_logcsi) {
+		return;
+	}
+	std::ofstream outfile_csv;
+	outfile_csv.open(d_filename, std::ios_base::app); // Create csv file
+	outfile_csv << csi_string;
+	outfile_csv.close();
 	
 	// ---------------------- ---------------------- ---------------------- ----------------------		
 }
@@ -483,6 +486,8 @@ void print_ascii(char* buf, int length) {
 private:
 	bool d_log;
 	bool d_debug;
+	bool d_logcsi;
+	std::string d_filename;
 	int d_last_seq_no;
 	uint64_t d_enc;
 	double d_snr; //HF
@@ -491,8 +496,8 @@ private:
 };
 
 parse_mac::sptr
-parse_mac::make(bool log, bool debug) {
-	return gnuradio::get_initial_sptr(new parse_mac_impl(log, debug));
+parse_mac::make(bool log, bool debug, bool logcsi,std::string filename) {
+	return gnuradio::get_initial_sptr(new parse_mac_impl(log, debug, logcsi, filename));
 }
 
 

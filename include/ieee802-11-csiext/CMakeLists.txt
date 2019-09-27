@@ -71,6 +71,7 @@ list(APPEND include_sources
     ${generated_includes}
     api.h
     frame_equalizer.h
+	decode_mac.h
     #mapper.h
     parse_mac.h
 	constellations.h

@@ -23,6 +23,7 @@
 
 %{
 #include "ieee802-11-csiext/constellations.h"
+#include "ieee802-11-csiext/decode_mac.h"
 #include "ieee802-11-csiext/frame_equalizer.h"
 #include "ieee802-11-csiext/parse_mac.h"
 #include "ieee802-11-csiext/signal_field.h"
@@ -36,11 +37,12 @@
 %include "gnuradio/digital/constellation.h"
 
 %include "ieee802-11-csiext/constellations.h"
+%include "ieee802-11-csiext/decode_mac.h"
 %include "ieee802-11-csiext/frame_equalizer.h"
 %include "ieee802-11-csiext/parse_mac.h"
 %include "ieee802-11-csiext/signal_field.h"
 
-
+GR_SWIG_BLOCK_MAGIC2(ieee802_11_csiext, decode_mac);
 GR_SWIG_BLOCK_MAGIC2(ieee802_11_csiext, frame_equalizer);
 GR_SWIG_BLOCK_MAGIC2(ieee802_11_csiext, parse_mac);
 

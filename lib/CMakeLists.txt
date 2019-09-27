@@ -105,7 +105,7 @@ list(APPEND gr_ieee802_11_csiext_sources
     ${generated_sources}
     #chunks_to_symbols_impl.cc
     constellations_impl.cc
-    #decode_mac.cc
+    decode_mac.cc
     equalizer/base.cc
     equalizer/comb.cc
     equalizer/ls.cc
