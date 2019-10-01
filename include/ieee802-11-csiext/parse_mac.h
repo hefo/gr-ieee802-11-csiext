@@ -29,7 +29,12 @@ class IEEE802_11_CSIEXT_API parse_mac : virtual public block
 public:
 
 	typedef boost::shared_ptr<parse_mac> sptr;
-	static sptr make(bool log = false, bool debug = false, bool logcsi = false,std::string filename = "wifi_capture.csv");
+	static sptr make(	bool log = false, 
+						bool debug = false, 
+						bool logcsi = false,
+						std::string filename = "wifi_capture.csv",
+						bool filter_udp=false,
+						int dest_port = 5010);
 
 };
 

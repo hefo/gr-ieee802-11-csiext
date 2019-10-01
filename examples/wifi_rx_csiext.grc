@@ -196,7 +196,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>2472000000.0</value>
+      <value>2452000000.0</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -295,7 +295,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>0</value>
+      <value>0.5</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -457,7 +457,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>5e6</value>
+      <value>20e6</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1006,7 +1006,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1069,7 +1069,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(920, 792)</value>
+      <value>(936, 832)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1351,7 +1351,15 @@
       <value>True</value>
     </param>
     <param>
+      <key>dest_port</key>
+      <value>5010</value>
+    </param>
+    <param>
       <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>filter_udp</key>
       <value>True</value>
     </param>
     <param>
@@ -1368,11 +1376,11 @@
     </param>
     <param>
       <key>logcsi</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>log</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1407,7 +1415,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1564,7 +1572,7 @@
     </param>
     <param>
       <key>log</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -3054,7 +3062,7 @@
   <connection>
     <source_block_id>ieee802_11_csiext_parse_mac_1</source_block_id>
     <sink_block_id>blocks_socket_pdu_1</sink_block_id>
-    <source_key>csi_data</source_key>
+    <source_key>udp_payload</source_key>
     <sink_key>pdus</sink_key>
   </connection>
   <connection>

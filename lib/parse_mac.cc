@@ -33,7 +33,7 @@ class parse_mac_impl : public parse_mac {
 public:
 
 std::string SSID = "No SSID";
-parse_mac_impl(bool log, bool debug, bool logcsi,std::string filename) :
+parse_mac_impl(bool log, bool debug, bool logcsi,std::string filename,bool filter_udp,int dest_filter) :
 		block("parse_mac",
 				gr::io_signature::make(0, 0, 0),
 				gr::io_signature::make(0, 0, 0)),
@@ -43,7 +43,9 @@ parse_mac_impl(bool log, bool debug, bool logcsi,std::string filename) :
 		d_enc(0),
 		d_debug(debug),
 		d_logcsi(logcsi),
-		d_filename(filename) {
+		d_filter_udp(filter_udp),
+		d_filename(filename),
+		d_dest_filter(dest_filter) {
 
 	message_port_register_in(pmt::mp("in"));
 	set_msg_handler(pmt::mp("in"), boost::bind(&parse_mac_impl::parse, this, _1));
@@ -52,6 +54,7 @@ parse_mac_impl(bool log, bool debug, bool logcsi,std::string filename) :
 	
 	// Mod
 	message_port_register_out(pmt::mp("csi_data"));
+	message_port_register_out(pmt::mp("udp_payload"));
 	
 }
 
@@ -76,6 +79,28 @@ void parse(pmt::pmt_t msg) {
 	mac_header *h = (mac_header*)pmt::blob_data(msg);
 
 	mylog(boost::format("length: %1%") % data_len );
+	
+	
+	// mod hefo
+	char *frame = (char*)pmt::blob_data(msg);
+	/*if ((((h->frame_control >> 2) & 3) != 2) || (*(frame + 32) = 0x08) || (*(frame + 33) != 0x00) || (*(frame + 43) != 0x11 ) ){
+			return;
+	}*/
+	
+	if(d_filter_udp == true){
+	
+		bool udp_detected = false;
+		if(((h->frame_control >> 2) & 3) == 2){ //if DATA
+			if((*(frame + 32) == 0x08) & (*(frame + 33) == 0x00)){//if IPv4
+				if(*(frame + 43) == 0x11 ){
+					dout << std::endl << "----- UDP packet detected -----" << std::endl;
+					udp_detected = true;
+				}
+			}
+		}
+	
+		if(udp_detected == false){return;}	
+	}
 
 	dout << std::endl << "new mac frame (length " << data_len << ")" << std::endl;
 	dout << "=========================================" << std::endl; 
@@ -109,19 +134,50 @@ void parse(pmt::pmt_t msg) {
 			break;
 	}
 
-	char *frame = (char*)pmt::blob_data(msg);
+	//char *frame = (char*)pmt::blob_data(msg);
 	
+	/*std::cout << "Entire frame:";
+	print_hex(frame, data_len);
+	std::cout << "\n";*/
 	
 	// DATA
-	if((((h->frame_control) >> 2) & 63) == 2) {
-		print_ascii(frame + 24, data_len - 24);
+	std::ostringstream udp_payload;
+	
+	if(d_filter_udp == true){
+		int dest_port = ((unsigned char)frame[56]<<8)+(unsigned char)frame[57];
+		std::cout << "Destination port:" << dest_port << "\n";	
+		std::cout << "UDP Payload:";
+		print_ascii(frame + 62, data_len - 62);
+		std::cout << "\n";
+			
+		udp_payload << "DEST_"<< dest_port << "_";
 		
-
+		char* buf = frame + 62;
+		for(int i = 0; i < data_len - 62; i++) {
+			if((buf[i] > 31) && (buf[i] < 127)) {
+				udp_payload << buf[i];
+			} else {
+				udp_payload << ".";
+			}
+		}
+		udp_payload << "\n";
 		
-	// QoS Data
-	} else if((((h->frame_control) >> 2) & 63) == 34) {
-		print_ascii(frame + 26, data_len - 26);
+	} else {	
+		if((((h->frame_control) >> 2) & 63) == 2) {
+			print_ascii(frame + 24, data_len - 24);
+			//std::cout << "MAC header stripped:";
+			//print_hex(frame + 24, data_len - 24);
+			//std::cout << "\n";	
+		// QoS Data
+		} else if((((h->frame_control) >> 2) & 63) == 34) {
+			print_ascii(frame + 26, data_len - 26);
+			//std::cout << "MAC header stripped:";
+			//print_hex(frame + 26, data_len - 26);
+			//std::cout << "\n";
+		}
+			
 	}
+	
 	
 	// ---------------------- mod (hefo@kth.se) ---------------------- ----------------------	
 
@@ -178,8 +234,6 @@ void parse(pmt::pmt_t msg) {
 	}
 	outfile << std::dec << ",";
 	
-
-	
 	
 	// Extract SNR
 	if(pmt::dict_has_key(dict, pmt::mp("snr"))) {
@@ -205,19 +259,34 @@ void parse(pmt::pmt_t msg) {
 	
 	// New Mod: Create string for writing to PAYLOAD output
 
-	std::string csi_string = outfile.str(); 
-	
-		
-	pmt::pmt_t p = pmt::make_u8vector(csi_string.length(),0);
-			
-		
+	std::string csi_string = outfile.str(); 	
+	pmt::pmt_t p = pmt::make_u8vector(csi_string.length(),0);				
 	for(int i = 0; i < csi_string.length(); i++) {
 		
 		pmt::u8vector_set(p,i,csi_string[i]);
 	
-	}
-		
+	}		
 	message_port_pub(pmt::mp("csi_data"),pmt::cons(pmt::PMT_NIL, p));
+	
+	
+	if(d_filter_udp == true){
+		
+		int dest_port = ((unsigned char)frame[56]<<8)+(unsigned char)frame[57];
+		if (dest_port == d_dest_filter){
+		
+			std::string udp_string = udp_payload.str();	
+			pmt::pmt_t p_udp = pmt::make_u8vector(udp_string.length(),0);				
+			for(int i = 0; i < udp_string.length(); i++) {
+				pmt::u8vector_set(p_udp,i,udp_string[i]);
+	
+			}
+			//std::cout << "DEBUG:" << d_dest_filter << "\n";
+			//std::cout << "DEBUG:" << dest_port << "\n";
+			message_port_pub(pmt::mp("udp_payload"),pmt::cons(pmt::PMT_NIL, p_udp));
+		}
+	}
+	
+	
 	
 	if(!d_logcsi) {
 		return;
@@ -483,10 +552,26 @@ void print_ascii(char* buf, int length) {
 	dout << std::endl;
 }
 
+// Mod HF 
+void print_hex(char* buf, int length) {
+	std::cout << std::setfill('0') << std::hex << std::setw(2);
+	for(int i = 0; i < length; i++) {
+		std::cout << (unsigned int)(unsigned char)buf[i];
+		std::cout << std::dec;
+		std::cout << " ";
+		std::cout << std::setfill('0') << std::hex << std::setw(2);
+	}
+	std::cout << std::dec;
+	std::cout << std::endl;
+}
+
 private:
 	bool d_log;
 	bool d_debug;
 	bool d_logcsi;
+	bool d_filter_udp;
+	int d_dest_filter;
+	int dest_port = 5010;
 	std::string d_filename;
 	int d_last_seq_no;
 	uint64_t d_enc;
@@ -496,8 +581,8 @@ private:
 };
 
 parse_mac::sptr
-parse_mac::make(bool log, bool debug, bool logcsi,std::string filename) {
-	return gnuradio::get_initial_sptr(new parse_mac_impl(log, debug, logcsi, filename));
+parse_mac::make(bool log, bool debug, bool logcsi,std::string filename,bool filter_udp,int dest_filter) {
+	return gnuradio::get_initial_sptr(new parse_mac_impl(log, debug, logcsi, filename,filter_udp,dest_filter));
 }
 
 

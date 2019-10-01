@@ -5,7 +5,7 @@
 	<key>ieee802_11_csiext_parse_mac</key>
 	<category>[IEEE802.11 (CSIEXT)]</category>
 	<import>import ieee802_11_csiext</import>
-	<make>ieee802_11_csiext.parse_mac($log, $debug, $logcsi, $filename)</make>
+	<make>ieee802_11_csiext.parse_mac($log, $debug, $logcsi, $filename,$filter_udp)</make>
 
 	<param>
 		<name>Log</name>
@@ -61,6 +61,29 @@
 		<value>wifi_capture.csv</value>
 		<type>string</type>
 	</param>
+	
+	<param>
+		<name>Destination port</name>
+		<key>dest_port</key>
+		<value>5010</value>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Filter UDP</name>
+		<key>filter_udp</key>
+		<value>False</value>
+		<type>bool</type>
+
+		<option>
+			<name>Enable</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>Disable</name>
+			<key>False</key>
+		</option>
+	</param>
 
 	<sink>
 		<name>in</name>
@@ -75,6 +98,12 @@
 	
 	<source>
 		<name>csi_data</name>
+		<type>message</type>
+		<optional>1</optional>
+	</source>
+	
+	<source>
+		<name>udp_payload</name>
 		<type>message</type>
 		<optional>1</optional>
 	</source>
