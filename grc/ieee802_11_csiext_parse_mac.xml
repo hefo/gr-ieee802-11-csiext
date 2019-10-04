@@ -64,7 +64,7 @@
 	
 	<param>
 		<name>Destination port</name>
-		<key>dest_port</key>
+		<key>dest_filter</key>
 		<value>5010</value>
 		<type>int</type>
 	</param>

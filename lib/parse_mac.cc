@@ -266,7 +266,7 @@ void parse(pmt::pmt_t msg) {
 		pmt::u8vector_set(p,i,csi_string[i]);
 	
 	}		
-	message_port_pub(pmt::mp("csi_data"),pmt::cons(pmt::PMT_NIL, p));
+	
 	
 	
 	if(d_filter_udp == true){
@@ -283,7 +283,10 @@ void parse(pmt::pmt_t msg) {
 			//std::cout << "DEBUG:" << d_dest_filter << "\n";
 			//std::cout << "DEBUG:" << dest_port << "\n";
 			message_port_pub(pmt::mp("udp_payload"),pmt::cons(pmt::PMT_NIL, p_udp));
+			message_port_pub(pmt::mp("csi_data"),pmt::cons(pmt::PMT_NIL, p));
 		}
+	}else{
+		message_port_pub(pmt::mp("csi_data"),pmt::cons(pmt::PMT_NIL, p));
 	}
 	
 	

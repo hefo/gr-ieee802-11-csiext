@@ -34,7 +34,7 @@ public:
 						bool logcsi = false,
 						std::string filename = "wifi_capture.csv",
 						bool filter_udp=false,
-						int dest_port = 5010);
+						int dest_filter = 5010);
 
 };
 
