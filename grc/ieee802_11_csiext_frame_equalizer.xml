@@ -5,7 +5,7 @@
 	<key>ieee802_11_csiext_frame_equalizer</key>
 	<category>[IEEE802.11 (CSIEXT)]</category>
 	<import>import ieee802_11_csiext</import>
-	<make>ieee802_11_csiext.frame_equalizer($algo, $freq, $bw, $log, $debug)</make>
+	<make>ieee802_11_csiext.frame_equalizer($algo, $freq, $bw, $log, $debug,$filename)</make>
 	<callback>set_algorithm($algo)</callback>
 	<callback>set_frequency($freq)</callback>
 	<callback>set_bandwidth($bw)</callback>
@@ -78,6 +78,13 @@
 			<name>Disable</name>
 			<key>False</key>
 		</option>
+	</param>
+	
+	<param>
+		<name>beta file</name>
+		<key>filename</key>
+		<value>beta_ch.csv</value>
+		<type>string</type>
 	</param>
 
 	<sink>

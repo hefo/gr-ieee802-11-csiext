@@ -39,7 +39,7 @@ class IEEE802_11_CSIEXT_API frame_equalizer : virtual public gr::block
 public:
 	typedef boost::shared_ptr<frame_equalizer> sptr;
 	static sptr make(Equalizer algo, double freq, double bw,
-			bool log, bool debug);
+			bool log, bool debug, std::string filename="beta_ch.csv");
 	virtual void set_algorithm(Equalizer algo) = 0;
 	virtual void set_bandwidth(double bw) = 0;
 	virtual void set_frequency(double freq) = 0;

@@ -76,6 +76,7 @@ int general_work (int noutput_items, gr_vector_int& ninput_items,
 			d_snr = pmt::to_double(pmt::dict_ref(dict, pmt::mp("snr"), pmt::from_double(0)));
 			
 			d_csi = pmt::symbol_to_string(pmt::dict_ref(dict, pmt::mp("csi"), pmt::string_to_symbol("abc")));
+			d_beta = pmt::symbol_to_string(pmt::dict_ref(dict, pmt::mp("beta"), pmt::string_to_symbol("abc")));
 			
 			d_nom_freq = pmt::to_double(pmt::dict_ref(dict, pmt::mp("freq"), pmt::from_double(0)));
 			d_freq_offset = pmt::to_double(pmt::dict_ref(dict, pmt::mp("freq_offset"), pmt::from_double(0)));
@@ -154,6 +155,7 @@ void decode() {
 	
 	// HF
 	dict = pmt::dict_add(dict, pmt::mp("csi"), pmt::string_to_symbol(d_csi));
+	dict = pmt::dict_add(dict, pmt::mp("beta"), pmt::string_to_symbol(d_beta));
 	//
 	
 	dict = pmt::dict_add(dict, pmt::mp("nomfreq"), pmt::from_double(d_nom_freq));
@@ -240,6 +242,7 @@ private:
 	frame_param d_frame;
 	ofdm_param d_ofdm;
 	double d_snr;  // dB
+	std::string d_beta;  // dB
 	double d_nom_freq;  // nominal frequency, Hz
 	double d_freq_offset;  // frequency offset, Hz
 	std::string d_csi;

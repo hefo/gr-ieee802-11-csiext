@@ -28,19 +28,20 @@ namespace gr {
 namespace ieee802_11_csiext {
 
 frame_equalizer::sptr
-frame_equalizer::make(Equalizer algo, double freq, double bw, bool log, bool debug) {
+frame_equalizer::make(Equalizer algo, double freq, double bw, bool log, bool debug, std::string filename) {
 	return gnuradio::get_initial_sptr
-		(new frame_equalizer_impl(algo, freq, bw, log, debug));
+		(new frame_equalizer_impl(algo, freq, bw, log, debug, filename));
 }
 
 
-frame_equalizer_impl::frame_equalizer_impl(Equalizer algo, double freq, double bw, bool log, bool debug) :
+frame_equalizer_impl::frame_equalizer_impl(Equalizer algo, double freq, double bw, bool log, bool debug, std::string filename) :
 	gr::block("frame_equalizer",
 			gr::io_signature::make(1, 1, 64 * sizeof(gr_complex)),
 			gr::io_signature::make(1, 1, 48)),
 	d_current_symbol(0), d_log(log), d_debug(debug), d_equalizer(NULL),
 	d_freq(freq), d_bw(bw), d_frame_bytes(0), d_frame_symbols(0),
-	d_freq_offset_from_synclong(0.0) {
+	d_freq_offset_from_synclong(0.0),
+	d_filename(filename) {
 
 	message_port_register_out(pmt::mp("symbols"));
 
@@ -217,7 +218,20 @@ frame_equalizer_impl::general_work (int noutput_items,
 				
 				// HF
 				dict = pmt::dict_add(dict, pmt::mp("csi"), pmt::string_to_symbol(d_equalizer->get_csi()));
+								
+				beta_str = std::to_string(beta);
+				std::replace(beta_str.begin(), beta_str.end(), ',', '.');			
+				dict = pmt::dict_add(dict, pmt::mp("beta"), pmt::string_to_symbol(beta_str));
+				
+				/*
+				std::ofstream outfile_csv;
+				outfile_csv.open(d_filename, std::ios_base::app);
+				outfile_csv << double(beta) << ",";
+				outfile_csv.close();
+				std::cout << "-->filename =" << d_filename << std::endl;
+				*/
 				//
+				//dout << "-->BETA =" << beta << std::endl;
 				
 				dict = pmt::dict_add(dict, pmt::mp("freq"), pmt::from_double(d_freq));
 				dict = pmt::dict_add(dict, pmt::mp("freq_offset"), pmt::from_double(d_freq_offset_from_synclong));

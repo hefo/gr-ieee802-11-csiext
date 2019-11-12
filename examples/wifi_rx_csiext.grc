@@ -196,7 +196,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>2452000000.0</value>
+      <value>2422000000</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -457,7 +457,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>20e6</value>
+      <value>5e6</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1014,11 +1014,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(952, 880)</value>
+      <value>(992, 880)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1073,11 +1073,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(952, 792)</value>
+      <value>(992, 752)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1356,7 +1356,7 @@
     </param>
     <param>
       <key>debug</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>dest_filter</key>
@@ -1368,11 +1368,11 @@
     </param>
     <param>
       <key>filter_udp</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(688, 784)</value>
+      <value>(760, 740)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2822,7 +2822,7 @@
     </param>
     <param>
       <key>dev_addr</key>
-      <value>"addr=192.168.50.173"</value>
+      <value>"addr=192.168.50.176"</value>
     </param>
     <param>
       <key>dev_args</key>

@@ -30,7 +30,7 @@ class frame_equalizer_impl : virtual public frame_equalizer
 {
 
 public:
-	frame_equalizer_impl(Equalizer algo, double freq, double bw, bool log, bool debug);
+	frame_equalizer_impl(Equalizer algo, double freq, double bw, bool log, bool debug,std::string filename);
 	~frame_equalizer_impl();
 
 	void set_algorithm(Equalizer algo);
@@ -49,7 +49,8 @@ private:
 	bool parse_signal(uint8_t *signal);
 	bool decode_signal_field(uint8_t *rx_bits);
 	void deinterleave(uint8_t *rx_bits);
-
+	
+	std::string d_filename;
 	equalizer::base *d_equalizer;
 	gr::thread::mutex d_mutex;
 	std::vector<gr::tag_t> tags;
@@ -84,7 +85,7 @@ private:
 	std::string d_csi;
 	std::string d_H_real;
 	std::string d_H_imag;
-	
+	std::string beta_str;
 };
 
 } // namespace ieee802_11

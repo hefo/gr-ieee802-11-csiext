@@ -243,6 +243,7 @@ void parse(pmt::pmt_t msg) {
 		}
 	}
 	
+	
 	// Extract CFO
 	if(pmt::dict_has_key(dict, pmt::mp("freqofs"))) {
 		pmt::pmt_t s = pmt::dict_ref(dict, pmt::mp("freqofs"), pmt::PMT_NIL);
@@ -254,6 +255,7 @@ void parse(pmt::pmt_t msg) {
 	outfile << int(h->seq_nr >> 4) << ","; // Write frame sequence number...
 	outfile << double(d_snr) << ","; // signal-to-noise ratio...
 	outfile << double(d_cfo) << ","; // carrier frequency offset...
+	outfile << pmt::dict_ref(dict, pmt::mp("beta"), pmt::PMT_NIL) << ",";// beta...
 	outfile << pmt::dict_ref(dict, pmt::mp("csi"), pmt::PMT_NIL) << "\n"; // and channel state information.
 	
 	
@@ -579,6 +581,7 @@ private:
 	int d_last_seq_no;
 	uint64_t d_enc;
 	double d_snr; //HF
+	std::string d_beta; //HF
 	double d_cfo; //HF
 	std::string d_csi;
 };
