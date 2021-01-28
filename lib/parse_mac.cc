@@ -145,10 +145,10 @@ void parse(pmt::pmt_t msg) {
 	
 	if(d_filter_udp == true){
 		int dest_port = ((unsigned char)frame[56]<<8)+(unsigned char)frame[57];
-		std::cout << "Destination port:" << dest_port << "\n";	
-		std::cout << "UDP Payload:";
+		dout << "Destination port:" << dest_port << "\n";	
+		dout << "UDP Payload:";
 		print_ascii(frame + 62, data_len - 62);
-		std::cout << "\n";
+		dout << "\n";
 			
 		udp_payload << "DEST_"<< dest_port << "_";
 		
@@ -272,7 +272,6 @@ void parse(pmt::pmt_t msg) {
 	
 	
 	if(d_filter_udp == true){
-		
 		int dest_port = ((unsigned char)frame[56]<<8)+(unsigned char)frame[57];
 		if (dest_port == d_dest_filter){
 		
